@@ -29,10 +29,10 @@ def login(request: Request, response: Response, form_data: OAuth2PasswordRequest
     
     # We must construct a JSONResponse so we can set cookies on it
     # We return the token in body as well for backward compatibility
-    res = JSONResponse(content={"access_token": token_data.access_token, "token_type": token_data.token_type})
+    res = JSONResponse(content={"access_token": token_data["access_token"], "token_type": token_data["token_type"]})
     res.set_cookie(
         key="access_token",
-        value=token_data.access_token,
+        value=token_data["access_token"],
         httponly=True,
         secure=settings.ENVIRONMENT == "production",
         samesite="lax",

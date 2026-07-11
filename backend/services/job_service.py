@@ -28,8 +28,12 @@ def create_job(db: Session, job: schemas.JobCreate, current_user: models.User) -
     db.commit()
     db.refresh(db_job)
     
-    generate_assessment_for_job.delay(db_job.id)
-    
+    try:
+        generate_assessment_for_job.delay(db_job.id)
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"Celery task failed, assessment will need manual generation: {e}")
     return db_job
 
 def get_jobs(db: Session, skip: int = 0, limit: int = 100) -> List[models.Job]:
