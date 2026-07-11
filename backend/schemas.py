@@ -119,12 +119,14 @@ class JobUpdate(BaseModel):
 class JobResponse(JobBase):
     id: int
     status: str
-    magic_link_token: Optional[str] = None
     created_at: datetime
     candidate_count: int = 0
     
     class Config:
         from_attributes = True
+
+class JobResponseDetailed(JobResponse):
+    magic_link_token: Optional[str] = None
 
 class AssessmentUpdate(BaseModel):
     scenario_prompt: str

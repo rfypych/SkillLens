@@ -5,6 +5,7 @@ import models, schemas
 from utils import auth
 from services import assessment_service
 from typing import Optional
+from config import settings
 
 router = APIRouter(
     prefix="/assessment",
@@ -33,9 +34,19 @@ def apply_for_job(
             key="access_token",
             value=app_data.access_token,
             httponly=True,
-            secure=True,
+            secure=settings.ENVIRONMENT == "production",
             samesite="lax",
             max_age=1800
+        )
+        from utils.auth import create_refresh_token
+        refresh_token = create_refresh_token(data={"sub": payload.email})
+        res.set_cookie(
+            key="refresh_token",
+            value=refresh_token,
+            httponly=True,
+            secure=settings.ENVIRONMENT == "production",
+            samesite="lax",
+            max_age=7 * 24 * 3600
         )
     return res
 

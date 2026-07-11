@@ -11,7 +11,7 @@ router = APIRouter(
     tags=["Jobs"]
 )
 
-@router.post("", response_model=schemas.JobResponse)
+@router.post("", response_model=schemas.JobResponseDetailed)
 def create_job(
     job: schemas.JobCreate, 
     db: Session = Depends(get_db), 
@@ -27,7 +27,7 @@ def get_jobs(
 ):
     return job_service.get_jobs(db, skip, limit)
 
-@router.get("/my-jobs", response_model=List[schemas.JobResponse])
+@router.get("/my-jobs", response_model=List[schemas.JobResponseDetailed])
 def get_my_jobs(
     skip: int = 0, 
     limit: int = 100, 
@@ -43,7 +43,7 @@ def get_job(
 ):
     return job_service.get_job(db, job_id)
 
-@router.put("/{job_id}", response_model=schemas.JobResponse)
+@router.put("/{job_id}", response_model=schemas.JobResponseDetailed)
 def update_job(
     job_id: int,
     job_update: schemas.JobUpdate,

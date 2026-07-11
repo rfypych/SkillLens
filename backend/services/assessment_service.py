@@ -56,8 +56,10 @@ def apply_for_job(
     resume_text = None
 
     if file and file.filename:
-        if not file.filename.lower().endswith(".pdf"):
+        if file.content_type != "application/pdf" or not file.filename.lower().endswith(".pdf"):
             raise HTTPException(status_code=400, detail="Only PDF resumes are supported")
+        if file.size and file.size > 5 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="File too large. Maximum size is 5MB.")
         
         unique_filename = f"{uuid.uuid4()}.pdf"
         upload_dir = "uploads"

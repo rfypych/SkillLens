@@ -49,7 +49,7 @@ Output Format: You MUST reply ONLY in raw JSON format with a single key "scenari
                 api_key=os.getenv("OPENAI_API_KEY"),
                 base_url=os.getenv("OPENAI_API_BASE"),
                 default_headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"},
-                timeout=4.0
+                timeout=30.0
             )
             response = client.chat.completions.create(
                 model=os.getenv("LLM_MODEL_NAME", "qwen3.7-plus"),
@@ -65,7 +65,7 @@ Output Format: You MUST reply ONLY in raw JSON format with a single key "scenari
                 groq_client = OpenAI(
                     api_key=os.getenv("GROQ_API_KEY"),
                     base_url="https://api.groq.com/openai/v1",
-                    timeout=10.0
+                    timeout=30.0
                 )
                 response = groq_client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
