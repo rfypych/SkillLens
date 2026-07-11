@@ -48,9 +48,14 @@ export default function CandidateLayout({ children }: { children: React.ReactNod
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    router.push('/login');
+  const handleLogout = async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch (e) {
+      console.error('Logout error', e);
+    } finally {
+      router.push('/login');
+    }
   };
 
   // Hide sidebar/header for test environment

@@ -1,6 +1,8 @@
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 from datetime import datetime
+from enum import Enum
+from pydantic import field_validator
 
 class Token(BaseModel):
     access_token: str
@@ -48,12 +50,27 @@ class CandidateProfileResponse(CandidateProfileBase):
     class Config:
         from_attributes = True
 
+class UserRole(str, Enum):
+    CANDIDATE = "candidate"
+    RECRUITER = "recruiter"
+
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
-    role: str = "candidate"
+    role: UserRole = UserRole.CANDIDATE
     full_name: Optional[str] = None
     company_name: Optional[str] = None # Used during signup to create a company if recruiter
+
+    @field_validator('password')
+    @classmethod
+    def validate_password(cls, v):
+        if len(v) < 8:
+            raise ValueError('Password must be at least 8 characters')
+        if not any(c.isupper() for c in v):
+            raise ValueError('Password must contain at least one uppercase letter')
+        if not any(c.isdigit() for c in v):
+            raise ValueError('Password must contain at least one digit')
+        return v
 
 class UserResponse(BaseModel):
     id: int

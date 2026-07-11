@@ -21,7 +21,23 @@ def apply_for_job(
     current_user: Optional[models.User] = Depends(auth.get_current_user_optional)
 ):
     payload = schemas.ApplicationCreate(name=name, email=email)
-    return assessment_service.apply_for_job(db, job_id, payload, file, current_user)
+    app_data = assessment_service.apply_for_job(db, job_id, payload, file, current_user)
+    
+    # We must return a JSONResponse to set the cookie
+    from fastapi.responses import JSONResponse
+    from fastapi.encoders import jsonable_encoder
+    
+    res = JSONResponse(content=jsonable_encoder(app_data))
+    if hasattr(app_data, "access_token") and app_data.access_token:
+        res.set_cookie(
+            key="access_token",
+            value=app_data.access_token,
+            httponly=True,
+            secure=True,
+            samesite="lax",
+            max_age=1800
+        )
+    return res
 
 @router.get("/job/{job_id}")
 def get_job_assessment(
@@ -43,9 +59,10 @@ def update_job_assessment(
 @router.get("/{application_id}/prompt")
 def get_assessment_prompt(
     application_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
 ):
-    return assessment_service.get_assessment_prompt(db, application_id)
+    return assessment_service.get_assessment_prompt(db, application_id, current_user)
 
 @router.post("/{application_id}/submit")
 def submit_assessment(
@@ -54,12 +71,13 @@ def submit_assessment(
     db: Session = Depends(get_db), 
     current_user: models.User = Depends(auth.get_current_user)
 ):
-    return assessment_service.submit_assessment(db, application_id, payload)
+    return assessment_service.submit_assessment(db, application_id, payload, current_user)
 
 @router.post("/{application_id}/chat")
 async def chat_assessment(
     application_id: int,
     payload: schemas.ChatRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
 ):
-    return await assessment_service.chat_assessment(db, application_id, payload)
+    return await assessment_service.chat_assessment(db, application_id, payload, current_user)

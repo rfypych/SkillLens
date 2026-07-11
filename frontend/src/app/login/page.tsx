@@ -23,14 +23,13 @@ export default function LoginPage() {
       loginData.append('username', email);
       loginData.append('password', password);
       
-      const data = await api.post('/auth/login', loginData.toString(), {
+      // Cookie is set by the backend now
+      await api.post('/auth/login', loginData.toString(), {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         requireAuth: false
       });
-      
-      localStorage.setItem('token', data.access_token);
       
       // Get user role
       const me = await api.get('/auth/me');

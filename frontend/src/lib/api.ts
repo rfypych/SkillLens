@@ -1,4 +1,4 @@
-const API_URL = '/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 interface FetchOptions extends RequestInit {
   requireAuth?: boolean;
 }
@@ -18,14 +18,6 @@ const fetchWithInterceptor = async (endpoint: string, options: FetchOptions = {}
     requestHeaders.set('Content-Type', 'application/json');
   }
 
-  // Inject Authorization token if required
-  if (requireAuth) {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    if (token) {
-      requestHeaders.set('Authorization', `Bearer ${token}`);
-    }
-  }
-
   const url = `${API_URL}${endpoint}`;
   
   const controller = new AbortController();
@@ -35,6 +27,7 @@ const fetchWithInterceptor = async (endpoint: string, options: FetchOptions = {}
   try {
     response = await fetch(url, {
       ...restOptions,
+      credentials: 'include',
       headers: requestHeaders,
       signal: controller.signal
     });
@@ -68,9 +61,7 @@ const fetchWithInterceptor = async (endpoint: string, options: FetchOptions = {}
     
     // Auto-logout on 401
     if (response.status === 401 && typeof window !== 'undefined') {
-      localStorage.removeItem('token');
-      // We could redirect to login here, but Next.js router is hook-based. 
-      // For now, simple window location reload is a fallback.
+      // Just redirect to login, middleware/server will handle the rest
       if (window.location.pathname !== '/login' && window.location.pathname !== '/signup' && window.location.pathname !== '/') {
         window.location.href = '/login';
       }

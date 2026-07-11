@@ -38,11 +38,12 @@ export default function Signup() {
       loginData.append('password', formData.password);
 
       try {
-        const data = await api.post('/auth/login', loginData.toString(), {
+        // Cookie is set by the backend now
+        await api.post('/auth/login', loginData.toString(), {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           requireAuth: false
         });
-        localStorage.setItem('token', data.access_token);
+        const me = await api.get('/auth/me');
         router.push(role === 'recruiter' ? '/recruiter' : '/candidate/dashboard');
       } catch {
         router.push('/login');

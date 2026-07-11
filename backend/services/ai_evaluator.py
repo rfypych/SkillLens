@@ -86,7 +86,7 @@ def apply_telemetry_penalties(result, eval_data, candidate_answer):
         if is_superhuman_speed:
             evaluation_feedback = f"Telemetry override: Superhuman typing speed detected ({cps:.1f} chars/sec). The candidate injected or pasted text using a tool that bypasses browser paste event listeners."
         elif is_transcribing:
-            evaluation_feedback = f"Telemetry override: Transcription Rhythm Detected. The candidate typed {answer_len} characters with an unnaturally low backspace ratio ({(backspace_ratio*100):.1f}%), indicating they were directly transcribing text from a secondary device/AI."
+            evaluation_feedback = f"Telemetry override: Transcription Rhythm Detected. The candidate typed {total_chars} characters with an unnaturally low backspace ratio ({(backspace_ratio*100):.1f}%), indicating they were directly transcribing text from a secondary device/AI."
         else:
             evaluation_feedback = "Telemetry override: Suspicious paste/switch pattern detected. The candidate submitted a pre-written answer in a duration too short for manual entry."
 
@@ -129,7 +129,7 @@ async def evaluate_candidate_answer_task(application_id: int, result_id: int):
             api_key=api_key, 
             base_url=base_url,
             default_headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"},
-            timeout=4.0
+            timeout=30.0
         )
         
         trap_word = app.hidden_prompt or "mentimun"

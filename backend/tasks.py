@@ -1,5 +1,6 @@
 import os
 import time
+import logging
 from celery_app import celery
 from database import SessionLocal
 import models
@@ -7,9 +8,10 @@ from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
+logger = logging.getLogger(__name__)
 
-@celery.task
-def generate_assessment_for_job(job_id: int):
+@celery.task(bind=True, max_retries=3, default_retry_delay=10)
+def generate_assessment_for_job(self, job_id: int):
     db = SessionLocal()
     try:
         job = db.query(models.Job).filter(models.Job.id == job_id).first()
@@ -74,8 +76,8 @@ Output Format: You MUST reply ONLY in raw JSON format with a single key "scenari
                 )
                 scenario_prompt = extract_json_scenario(response.choices[0].message.content.strip())
             except Exception as e2:
-                print(f"Fallback Groq failed: {e2}")
-                scenario_prompt = "Failed to generate assessment scenario. Please edit manually."
+                logger.error(f"Fallback Groq failed: {e2}")
+                raise self.retry(exc=e2)
         
         import random
         trap_words = ["mentimun", "jerapah", "kulkas", "sepeda", "semangka", "kalkulator", "lemari", "jendela", "bantal", "gajah", "durian", "payung", "sepatu", "sendok", "garpu"]
@@ -94,8 +96,8 @@ Output Format: You MUST reply ONLY in raw JSON format with a single key "scenari
         
     return {"status": "success", "job_id": job_id}
 
-@celery.task
-def run_ai_eval_sync_task(application_id: int, result_id: int):
+@celery.task(bind=True, max_retries=3, default_retry_delay=10)
+def run_ai_eval_sync_task(self, application_id: int, result_id: int):
     import asyncio
     from services.ai_evaluator import evaluate_candidate_answer_task
     
@@ -103,6 +105,9 @@ def run_ai_eval_sync_task(application_id: int, result_id: int):
     asyncio.set_event_loop(loop)
     try:
         loop.run_until_complete(evaluate_candidate_answer_task(application_id, result_id))
+    except Exception as e:
+        logger.error(f"AI Eval failed for application {application_id}: {str(e)}")
+        raise self.retry(exc=e)
     finally:
         loop.close()
     return {"status": "success", "application_id": application_id}

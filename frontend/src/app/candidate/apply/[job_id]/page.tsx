@@ -62,9 +62,7 @@ export default function ApplyForJob() {
 
       const data = await api.post(`/assessment/${job_id}/apply`, dataPayload, { requireAuth: false });
 
-      if (data.access_token) {
-        localStorage.setItem('token', data.access_token);
-      }
+      // Cookie is set by the backend now
       
       // Redirect to instructions
       router.push(`/candidate/instructions/${data.id}`);

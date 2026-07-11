@@ -4,8 +4,6 @@ import database
 import models
 from routers import jobs, auth, applications, assessment
 
-# Create database tables
-models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI(
     title="SkillLens API",
@@ -13,13 +11,20 @@ app = FastAPI(
     version="0.1.0"
 )
 
+from limiter import limiter
+from slowapi.errors import RateLimitExceeded
+from slowapi import _rate_limit_exceeded_handler
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=["http://localhost:3000", "https://skilllens.com"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "Accept"],
 )
 
 from fastapi.staticfiles import StaticFiles

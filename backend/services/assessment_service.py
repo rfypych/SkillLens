@@ -36,9 +36,12 @@ def apply_for_job(
             raise HTTPException(status_code=400, detail="Name and email are required for guest applications")
         user = db.query(models.User).filter(models.User.email == payload.email).first()
         if not user:
+            import secrets
+            from utils.auth import get_password_hash
+            dummy_hash = get_password_hash(secrets.token_urlsafe(32))
             user = models.User(
                 email=payload.email,
-                hashed_password="guest_user",
+                hashed_password=dummy_hash,
                 full_name=payload.name,
                 role="candidate"
             )
@@ -124,19 +127,23 @@ def update_job_assessment(db: Session, job_id: int, payload: schemas.AssessmentU
     db.commit()
     return {"message": "Assessment updated successfully"}
 
-def get_assessment_prompt(db: Session, application_id: int):
+def get_assessment_prompt(db: Session, application_id: int, current_user: models.User):
     app = db.query(models.Application).filter(models.Application.id == application_id).first()
     if not app:
         raise HTTPException(status_code=404, detail="Application not found")
+    if app.user_id != current_user.id and current_user.role not in ["recruiter", "admin"]:
+        raise HTTPException(status_code=403, detail="Not authorized")
     assessment = db.query(models.Assessment).filter(models.Assessment.job_id == app.job_id).first()
     if not assessment:
         raise HTTPException(status_code=404, detail="Assessment not ready")
     return {"scenario_prompt": assessment.scenario_prompt, "hidden_prompt": app.hidden_prompt or assessment.hidden_prompt}
 
-def submit_assessment(db: Session, application_id: int, payload: schemas.AssessmentSubmit):
+def submit_assessment(db: Session, application_id: int, payload: schemas.AssessmentSubmit, current_user: models.User):
     app = db.query(models.Application).filter(models.Application.id == application_id).first()
     if not app:
         raise HTTPException(status_code=404, detail="Application not found")
+    if app.user_id != current_user.id and current_user.role not in ["recruiter", "admin"]:
+        raise HTTPException(status_code=403, detail="Not authorized to submit this assessment")
         
     app.status = "evaluated"
     
@@ -161,10 +168,12 @@ def submit_assessment(db: Session, application_id: int, payload: schemas.Assessm
 
 from openai import AsyncOpenAI
 
-async def chat_assessment(db: Session, application_id: int, payload: schemas.ChatRequest):
+async def chat_assessment(db: Session, application_id: int, payload: schemas.ChatRequest, current_user: models.User):
     app = db.query(models.Application).filter(models.Application.id == application_id).first()
     if not app:
         raise HTTPException(status_code=404, detail="Application not found")
+    if app.user_id != current_user.id and current_user.role not in ["recruiter", "admin"]:
+        raise HTTPException(status_code=403, detail="Not authorized")
     
     job = app.job
     
