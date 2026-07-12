@@ -82,28 +82,23 @@ export default function Signup() {
 
           {/* Smooth Role Toggle */}
           <div className="relative flex bg-[#F7F9F9] p-1.5 rounded-xl mb-8 border border-brand-gray-light/40">
-            {(['candidate', 'recruiter'] as const).map(r => {
-              const isActive = role === r;
-              return (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => setRole(r)}
-                  className={`relative flex-1 py-2.5 text-xs font-bold rounded-lg transition-colors uppercase tracking-wider z-10 ${
-                    isActive ? 'text-brand-secondary' : 'text-brand-gray-dark hover:text-brand-secondary'
-                  }`}
-                >
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeRoleTab"
-                      className="absolute inset-0 bg-brand-white shadow-sm border border-brand-gray-light/40 rounded-lg -z-10"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                    />
-                  )}
-                  {r === 'candidate' ? 'I\'m a Candidate' : 'I\'m a Recruiter'}
-                </button>
-              );
-            })}
+            <motion.div 
+              className="absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-brand-white shadow-sm border border-brand-gray-light/40 rounded-lg z-0"
+              animate={{ x: role === 'candidate' ? 0 : '100%' }}
+              transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+            />
+            {(['candidate', 'recruiter'] as const).map(r => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => setRole(r)}
+                className={`relative flex-1 py-2.5 text-xs font-bold rounded-lg transition-colors uppercase tracking-wider z-10 ${
+                  role === r ? 'text-brand-secondary' : 'text-brand-gray-dark hover:text-brand-secondary'
+                }`}
+              >
+                {r === 'candidate' ? 'I\'m a Candidate' : 'I\'m a Recruiter'}
+              </button>
+            ))}
           </div>
 
           {error && (
@@ -136,13 +131,13 @@ export default function Signup() {
               </div>
             </div>
 
-            <AnimatePresence mode="popLayout">
+            <AnimatePresence>
               {role === 'recruiter' && (
                 <motion.div
-                  initial={{ opacity: 0, height: 0, y: -10 }}
-                  animate={{ opacity: 1, height: 'auto', y: 0 }}
-                  exit={{ opacity: 0, height: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: 'auto', marginTop: 20 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
                   className="overflow-hidden"
                 >
                   <label className="block text-sm font-medium text-brand-secondary mb-1 mt-1">Company Name</label>
