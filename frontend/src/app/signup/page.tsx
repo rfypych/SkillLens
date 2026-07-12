@@ -6,6 +6,7 @@ import { Lock, Mail, ArrowRight, User, Building2, Aperture, AlertCircle } from '
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+import SponsorLogos from '@/components/SponsorLogos';
 
 export default function Signup() {
   const router = useRouter();
@@ -192,6 +193,10 @@ export default function Signup() {
               Sign in
             </Link>
           </p>
+          
+          <div className="mt-8 pt-6">
+            <SponsorLogos />
+          </div>
         </motion.div>
       </div>
 

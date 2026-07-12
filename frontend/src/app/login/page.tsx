@@ -4,8 +4,9 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Mail, Lock, Aperture, AlertCircle, CheckCircle2, ShieldAlert, Clock } from 'lucide-react';
+import { ArrowRight, Mail, Lock, AlertCircle } from 'lucide-react';
 import { api } from '@/lib/api';
+import SponsorLogos from '@/components/SponsorLogos';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -131,6 +132,10 @@ export default function LoginPage() {
               Sign up now
             </Link>
           </p>
+          
+          <div className="mt-12 pt-8">
+            <SponsorLogos />
+          </div>
         </motion.div>
       </div>
 

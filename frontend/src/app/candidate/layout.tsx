@@ -15,6 +15,7 @@ import {
 import { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
 import clsx from 'clsx';
+import SponsorLogos from '@/components/SponsorLogos';
 
 const sidebarLinks = [
   { name: 'Dashboard', href: '/candidate/dashboard', icon: LayoutDashboard },
@@ -160,8 +161,11 @@ export default function CandidateLayout({ children }: { children: React.ReactNod
         </header>
 
         {/* Page Content */}
-        <div className="p-4 sm:p-6 md:p-8 flex-1 overflow-x-hidden">
-          {children}
+        <div className="p-4 sm:p-6 md:p-8 flex-1 overflow-x-hidden flex flex-col">
+          <div className="flex-1">
+            {children}
+          </div>
+          <SponsorLogos />
         </div>
       </main>
     </div>
