@@ -89,15 +89,15 @@ export default function ApplyForJob() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-[#F7F9F9]">
-      {/* Brand Side (Left on Desktop) */}
-      <div className="w-full md:w-5/12 bg-brand-secondary p-8 md:p-12 text-brand-white flex flex-col justify-between items-start relative overflow-hidden">
+      {/* Brand Side (Top on Mobile, Left on Desktop) */}
+      <div className="w-full md:w-5/12 bg-brand-secondary p-6 md:p-12 text-brand-white flex flex-col justify-between items-start relative overflow-hidden">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand-dark-teal rounded-full blur-3xl opacity-50 mix-blend-screen pointer-events-none" />
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-brand-primary rounded-full blur-3xl opacity-30 mix-blend-screen pointer-events-none" />
 
-        <div className="z-10 w-full mb-12">
-          <div className="flex items-center gap-2.5 mb-16">
-            <img src="/logo.svg" alt="SkillLens Logo" className="h-10 w-auto brightness-0 invert" />
-            <span className="text-2xl font-display font-bold text-brand-white tracking-tight">SkillLens</span>
+        <div className="z-10 w-full mb-6 md:mb-12">
+          <div className="flex items-center gap-2.5 mb-8 md:mb-16">
+            <img src="/logo.svg" alt="SkillLens Logo" className="h-8 md:h-10 w-auto brightness-0 invert" />
+            <span className="text-xl md:text-2xl font-display font-bold text-brand-white tracking-tight">SkillLens</span>
           </div>
 
           <motion.div
@@ -105,32 +105,32 @@ export default function ApplyForJob() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-white/10 border border-brand-white/20 text-brand-accent text-xs font-bold uppercase tracking-wider mb-6 backdrop-blur-sm">
-              <Briefcase className="w-4 h-4" /> Assessment Portal
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-white/10 border border-brand-white/20 text-brand-accent text-[10px] md:text-xs font-bold uppercase tracking-wider mb-4 md:mb-6 backdrop-blur-sm">
+              <Briefcase className="w-3 h-3 md:w-4 md:h-4" /> Assessment Portal
             </div>
             
-            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 leading-tight tracking-tight">
+            <h1 className="text-3xl md:text-5xl font-display font-bold mb-4 leading-tight tracking-tight">
               {job?.title || "Role Assessment"}
             </h1>
             
-            <div className="flex flex-wrap gap-4 text-sm text-brand-gray-light font-medium mb-8">
-              <div className="flex items-center gap-1.5 bg-brand-white/5 px-3 py-2 rounded-lg">
-                <Building2 className="w-4 h-4 text-brand-accent" /> {job?.company_name || "Company"}
+            <div className="flex flex-wrap gap-2 md:gap-4 text-xs md:text-sm text-brand-gray-light font-medium mb-6 md:mb-8">
+              <div className="flex items-center gap-1.5 bg-brand-white/5 px-2.5 py-1.5 md:px-3 md:py-2 rounded-lg">
+                <Building2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-brand-accent" /> {job?.company_name || "Company"}
               </div>
-              <div className="flex items-center gap-1.5 bg-brand-white/5 px-3 py-2 rounded-lg">
-                <MapPin className="w-4 h-4 text-brand-accent" /> {job?.location || "Remote"}
+              <div className="flex items-center gap-1.5 bg-brand-white/5 px-2.5 py-1.5 md:px-3 md:py-2 rounded-lg">
+                <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4 text-brand-accent" /> {job?.location || "Remote"}
               </div>
             </div>
 
-            <div className="prose prose-invert prose-sm line-clamp-4 text-brand-gray-light/80 leading-relaxed max-w-sm">
+            <div className="prose prose-invert text-xs md:text-sm line-clamp-3 md:line-clamp-4 text-brand-gray-light/80 leading-relaxed max-w-sm hidden sm:block">
               {job?.description || "You've been invited to take a technical assessment. Please provide your details to begin the proctored session."}
             </div>
           </motion.div>
         </div>
       </div>
 
-      {/* Form Side (Right on Desktop) */}
-      <div className="w-full md:w-7/12 flex flex-col justify-center px-6 py-12 md:px-24 flex-1">
+      {/* Form Side (Bottom on Mobile, Right on Desktop) */}
+      <div className="w-full md:w-7/12 flex flex-col justify-center px-6 py-8 md:px-24 flex-1">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
