@@ -166,11 +166,13 @@ export default function CandidateAssessment() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F7F9F9] p-4 font-sans">
+      <div className="min-h-screen flex items-center justify-center bg-[#F7F9F9] p-4 font-sans relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-[40vh] bg-brand-secondary skew-y-3 origin-top-left -z-10" />
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand-dark-teal rounded-full blur-3xl opacity-50 mix-blend-screen -z-10" />
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-brand-white border border-brand-gray-light/30 max-w-lg w-full rounded-3xl p-12 text-center shadow-sm relative overflow-hidden"
+          className="bg-brand-white border border-brand-gray-light/30 max-w-lg w-full rounded-3xl p-12 text-center shadow-2xl relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
           <div className="relative z-10">
@@ -183,7 +185,7 @@ export default function CandidateAssessment() {
             </p>
             <button
               onClick={() => router.push('/candidate/dashboard')}
-              className="px-8 py-3.5 bg-brand-primary hover:bg-[#5a9361] text-brand-white font-bold rounded-xl text-sm transition-all shadow-lg hover:shadow-brand-primary/20 hover:-translate-y-0.5 active:translate-y-0"
+              className="px-8 py-3.5 bg-brand-primary hover:bg-brand-dark-teal text-brand-white font-bold rounded-xl text-sm transition-all shadow-lg hover:shadow-brand-primary/20 hover:-translate-y-0.5 active:translate-y-0 uppercase tracking-wider"
             >
               Return to Dashboard
             </button>
@@ -215,10 +217,10 @@ export default function CandidateAssessment() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-white/95 z-[100] flex flex-col items-center justify-center p-6 text-center backdrop-blur-xl"
+            className="fixed inset-0 bg-brand-white/95 z-[100] flex flex-col items-center justify-center p-6 text-center backdrop-blur-xl"
           >
             <AlertOctagon className="w-24 h-24 text-red-600 mb-6 animate-pulse" />
-            <h2 className="text-4xl font-display font-bold text-brand-secondary mb-4">Focus Violation</h2>
+            <h2 className="text-4xl font-display font-bold text-brand-secondary mb-4 tracking-tight">Focus Violation</h2>
             <p className="text-xl text-brand-gray-dark max-w-lg leading-relaxed">
               You have left the assessment window. This action is being recorded by our anti-cheat system. Please return immediately.
             </p>
@@ -230,27 +232,36 @@ export default function CandidateAssessment() {
       <AnimatePresence>
         {showTabWarning && !isTabHidden && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="fixed inset-0 bg-brand-dark/40 z-[90] flex items-center justify-center p-6 backdrop-blur-sm"
+            initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            animate={{ opacity: 1, backdropFilter: "blur(12px)" }}
+            exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            className="fixed inset-0 bg-brand-secondary/40 z-[90] flex items-center justify-center p-6"
           >
-            <div className="bg-brand-white border border-red-200 max-w-md w-full rounded-3xl p-8 text-center shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-red-600" />
-              <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <AlertOctagon className="w-8 h-8" />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-brand-white max-w-md w-full rounded-3xl p-10 text-center shadow-2xl relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-red-600" />
+              <div className="absolute top-0 right-0 w-48 h-48 bg-red-600/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+              
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-100 shadow-sm">
+                  <AlertOctagon className="w-8 h-8" />
+                </div>
+                <h3 className="text-2xl font-display font-bold text-brand-secondary mb-3 tracking-tight">Attention Required</h3>
+                <p className="text-brand-gray-dark text-sm leading-relaxed mb-8">
+                  Leaving the browser tab during the assessment is strictly prohibited. Your focus switches are being logged and will be visible to the recruiter.
+                </p>
+                <button
+                  onClick={() => setShowTabWarning(false)}
+                  className="w-full py-3.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-sm transition-colors shadow-lg hover:shadow-red-600/20 uppercase tracking-wider"
+                >
+                  I Understand
+                </button>
               </div>
-              <h3 className="text-2xl font-display font-bold text-brand-secondary mb-3">Attention Required</h3>
-              <p className="text-brand-gray-dark text-sm leading-relaxed mb-8">
-                Leaving the browser tab during the assessment is strictly prohibited. Your focus switches are being logged and will be visible to the recruiter.
-              </p>
-              <button
-                onClick={() => setShowTabWarning(false)}
-                className="w-full py-3.5 bg-red-600 hover:bg-red-700 text-brand-white font-bold rounded-xl text-sm transition-colors shadow-lg shadow-red-600/20"
-              >
-                I Understand
-              </button>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -259,32 +270,39 @@ export default function CandidateAssessment() {
       <AnimatePresence>
         {showSubmitConfirm && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-brand-dark/40 z-[80] flex items-center justify-center p-6 backdrop-blur-sm"
+            initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            animate={{ opacity: 1, backdropFilter: "blur(12px)" }}
+            exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            className="fixed inset-0 bg-brand-secondary/40 z-[80] flex items-center justify-center p-6"
           >
             <motion.div 
-              initial={{ y: 20 }} animate={{ y: 0 }}
-              className="bg-brand-white border border-brand-gray-light/30 max-w-md w-full rounded-3xl p-8 shadow-2xl"
+              initial={{ y: 20, opacity: 0 }} 
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 20, opacity: 0 }}
+              className="bg-brand-white max-w-md w-full rounded-3xl p-10 shadow-2xl relative overflow-hidden"
             >
-              <h3 className="text-2xl font-display font-bold text-brand-secondary mb-3">Submit Assessment?</h3>
-              <p className="text-brand-gray-dark text-sm mb-8 leading-relaxed">
-                Are you sure you want to complete and submit this assessment? You cannot undo this action or return to the chat.
-              </p>
-              <div className="flex gap-4">
-                <button 
-                  onClick={() => setShowSubmitConfirm(false)} 
-                  className="flex-1 py-3.5 rounded-xl font-bold text-brand-gray-dark bg-brand-gray-light/20 hover:bg-brand-gray-light/30 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={handleSubmit} 
-                  className="flex-1 py-3.5 bg-brand-primary hover:bg-[#5a9361] text-brand-white rounded-xl font-bold transition-colors shadow-lg shadow-brand-primary/20"
-                >
-                  Yes, Submit
-                </button>
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-brand-primary" />
+              <div className="absolute top-0 right-0 w-48 h-48 bg-brand-primary/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+
+              <div className="relative z-10">
+                <h3 className="text-2xl font-display font-bold text-brand-secondary mb-3 tracking-tight">Submit Assessment?</h3>
+                <p className="text-brand-gray-dark text-sm mb-8 leading-relaxed">
+                  Are you sure you want to complete and submit this assessment? You cannot undo this action or return to the chat.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button 
+                    onClick={() => setShowSubmitConfirm(false)} 
+                    className="flex-1 py-3.5 rounded-xl font-bold text-brand-gray-dark bg-brand-gray-light/10 hover:bg-brand-gray-light/20 border border-brand-gray-light/30 transition-colors uppercase tracking-wider text-xs"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={handleSubmit} 
+                    className="flex-1 py-3.5 bg-brand-primary hover:bg-brand-dark-teal text-brand-white rounded-xl font-bold transition-all shadow-lg hover:shadow-brand-primary/20 uppercase tracking-wider text-xs"
+                  >
+                    Yes, Submit
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>
