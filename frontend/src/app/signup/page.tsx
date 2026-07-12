@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Lock, Mail, ArrowRight, User, Building2, Aperture, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Lock, Mail, ArrowRight, User, Building2, AlertCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
@@ -39,12 +39,11 @@ export default function Signup() {
       loginData.append('password', formData.password);
 
       try {
-        // Cookie is set by the backend now
         await api.post('/auth/login', loginData.toString(), {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           requireAuth: false
         });
-        const me = await api.get('/auth/me');
+        await api.get('/auth/me');
         router.push(role === 'recruiter' ? '/recruiter' : '/candidate/dashboard');
       } catch {
         router.push('/login');
@@ -63,41 +62,59 @@ export default function Signup() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Form Side */}
-      <div className="w-full md:w-1/2 flex flex-col justify-center px-8 md:px-24 bg-brand-white py-12">
+      <div className="w-full md:w-1/2 flex flex-col justify-center px-8 md:px-24 bg-brand-white py-12 flex-1 md:flex-none">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="w-full max-w-md mx-auto"
         >
+          {/* Mobile Logo */}
+          <div className="md:hidden flex items-center gap-2.5 mb-12">
+            <img src="/logo.svg" alt="SkillLens Logo" className="h-8 w-auto" />
+            <span className="text-xl font-display font-bold text-brand-secondary tracking-tight">SkillLens</span>
+          </div>
+
           <div className="mb-10">
             <h1 className="text-4xl font-display font-bold text-brand-secondary mb-2">Create an account.</h1>
             <p className="text-brand-gray-dark">Join SkillLens and experience AI-powered recruitment.</p>
           </div>
 
-          {/* Role Toggle */}
-          <div className="flex bg-[#F7F9F9] p-1.5 rounded-xl mb-8 border border-brand-gray-light/40">
-            {(['candidate', 'recruiter'] as const).map(r => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setRole(r)}
-                className={`flex-1 py-2.5 text-xs font-bold rounded-lg transition-all uppercase tracking-wider ${
-                  role === r
-                    ? 'bg-brand-white shadow-sm text-brand-secondary border border-brand-gray-light/40'
-                    : 'text-brand-gray-dark hover:text-brand-secondary'
-                }`}
-              >
-                {r === 'candidate' ? 'I\'m a Candidate' : 'I\'m a Recruiter'}
-              </button>
-            ))}
+          {/* Smooth Role Toggle */}
+          <div className="relative flex bg-[#F7F9F9] p-1.5 rounded-xl mb-8 border border-brand-gray-light/40">
+            {(['candidate', 'recruiter'] as const).map(r => {
+              const isActive = role === r;
+              return (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setRole(r)}
+                  className={`relative flex-1 py-2.5 text-xs font-bold rounded-lg transition-colors uppercase tracking-wider z-10 ${
+                    isActive ? 'text-brand-secondary' : 'text-brand-gray-dark hover:text-brand-secondary'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeRoleTab"
+                      className="absolute inset-0 bg-brand-white shadow-sm border border-brand-gray-light/40 rounded-lg -z-10"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                  {r === 'candidate' ? 'I\'m a Candidate' : 'I\'m a Recruiter'}
+                </button>
+              );
+            })}
           </div>
 
           {error && (
-            <div className="mb-6 flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }} 
+              animate={{ opacity: 1, height: 'auto' }} 
+              className="mb-6 flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 overflow-hidden"
+            >
               <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
               <p className="text-sm font-medium">{error}</p>
-            </div>
+            </motion.div>
           )}
 
           <form className="space-y-5" onSubmit={handleSignup}>
@@ -119,25 +136,33 @@ export default function Signup() {
               </div>
             </div>
 
-            {role === 'recruiter' && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
-                <label className="block text-sm font-medium text-brand-secondary mb-1">Company Name</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Building2 className="h-5 w-5 text-brand-gray-light" />
+            <AnimatePresence mode="popLayout">
+              {role === 'recruiter' && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, y: -10 }}
+                  animate={{ opacity: 1, height: 'auto', y: 0 }}
+                  exit={{ opacity: 0, height: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <label className="block text-sm font-medium text-brand-secondary mb-1 mt-1">Company Name</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Building2 className="h-5 w-5 text-brand-gray-light" />
+                    </div>
+                    <input
+                      type="text"
+                      name="company_name"
+                      required={role === 'recruiter'}
+                      value={formData.company_name}
+                      onChange={handleChange}
+                      className="block w-full pl-10 pr-3 py-3 border border-brand-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-colors"
+                      placeholder="Acme Corp"
+                    />
                   </div>
-                  <input
-                    type="text"
-                    name="company_name"
-                    required={role === 'recruiter'}
-                    value={formData.company_name}
-                    onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-brand-gray-light rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-colors"
-                    placeholder="Acme Corp"
-                  />
-                </div>
-              </motion.div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <div>
               <label className="block text-sm font-medium text-brand-secondary mb-1">Email Address</label>
@@ -212,15 +237,42 @@ export default function Signup() {
           </div>
         </div>
 
-        <div className="z-10 space-y-6 max-w-sm">
-          <div className="p-5 bg-brand-dark-teal/40 rounded-2xl border border-brand-dark-teal">
-            <p className="text-sm font-bold text-brand-accent uppercase tracking-wider mb-2">For Candidates</p>
-            <p className="text-brand-gray-light text-sm leading-relaxed">Prove your real-world skills through AI-proctored scenario simulations. Stand out beyond your resume.</p>
-          </div>
-          <div className="p-5 bg-brand-dark-teal/40 rounded-2xl border border-brand-dark-teal">
-            <p className="text-sm font-bold text-brand-accent uppercase tracking-wider mb-2">For Recruiters</p>
-            <p className="text-brand-gray-light text-sm leading-relaxed">Get forensic-level insight into every applicant. Detect fabricated skills, identify hidden gems, and hire with confidence.</p>
-          </div>
+        <div className="z-10 max-w-lg">
+          <AnimatePresence mode="wait">
+            {role === 'candidate' ? (
+              <motion.div
+                key="candidate-text"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <h2 className="text-4xl md:text-5xl font-display font-bold mb-6 leading-tight">
+                  Showcase your real skills,<br/>
+                  <span className="text-brand-accent">not just your resume.</span>
+                </h2>
+                <p className="text-brand-gray-light text-lg leading-relaxed mb-10">
+                  Prove your real-world problem solving through highly contextual AI-proctored simulations. Stand out from the crowd and let your abilities do the talking.
+                </p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="recruiter-text"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <h2 className="text-4xl md:text-5xl font-display font-bold mb-6 leading-tight">
+                  Zero false positives.<br/>
+                  <span className="text-brand-accent">100% confidence.</span>
+                </h2>
+                <p className="text-brand-gray-light text-lg leading-relaxed mb-10">
+                  Get forensic-level insight into every applicant. Detect fabricated skills, identify hidden gems, and hire with absolute certainty.
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
