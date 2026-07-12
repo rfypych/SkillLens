@@ -39,8 +39,7 @@ export default function CandidateAssessment() {
   const [isTabHidden, setIsTabHidden] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) { router.push('/login'); return; }
+
 
     api.get(`/assessment/${appId}/prompt`)
       .then(data => {

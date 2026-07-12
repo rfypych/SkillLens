@@ -18,8 +18,7 @@ export default function CandidateDashboard() {
   const [activeTab, setActiveTab] = useState<'applications' | 'positions'>('applications');
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) { router.push('/login'); return; }
+
 
     Promise.all([
       api.get('/jobs'),

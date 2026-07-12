@@ -54,11 +54,7 @@ export default function JobAssessmentReview() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
+
 
     let isMounted = true;
 

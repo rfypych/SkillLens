@@ -60,8 +60,7 @@ export default function CandidateForensicReport() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) { router.push('/login'); return; }
+
 
     const fetchApp = async () => {
       try {

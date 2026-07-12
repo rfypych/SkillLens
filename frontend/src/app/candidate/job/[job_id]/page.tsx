@@ -18,11 +18,6 @@ export default function JobDetail() {
   const [alreadyApplied, setAlreadyApplied] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
     Promise.all([
       api.get(`/jobs/${jobId}`),
       api.get('/applications').catch(() => []),

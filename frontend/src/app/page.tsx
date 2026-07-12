@@ -8,12 +8,6 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
     api.get('/auth/me')
     .then(data => {
       if (data.role === 'recruiter' || data.role === 'admin') {
@@ -23,8 +17,7 @@ export default function Home() {
       }
     })
     .catch(() => {
-      localStorage.removeItem('token');
-      router.push('/login');
+      // API wrapper handles 401 redirects automatically
     });
   }, [router]);
 

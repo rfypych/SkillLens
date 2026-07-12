@@ -24,12 +24,6 @@ export default function CandidateProfile() {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
     api.get('/auth/me')
       .then(data => {
         setFormData({
