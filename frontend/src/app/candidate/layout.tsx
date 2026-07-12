@@ -28,7 +28,13 @@ export default function CandidateLayout({ children }: { children: React.ReactNod
   const [userInitials, setUserInitials] = useState('CA');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const isPublicAssessmentPage = pathname.includes('/candidate/test/') || 
+                                 pathname.includes('/candidate/apply/') || 
+                                 pathname.includes('/candidate/instructions/');
+
   useEffect(() => {
+    if (isPublicAssessmentPage) return;
+
     api.get('/auth/me').then((data: any) => {
       if (data?.role !== 'candidate') {
         router.push('/login');
@@ -42,7 +48,7 @@ export default function CandidateLayout({ children }: { children: React.ReactNod
     }).catch(() => {
       router.push('/login');
     });
-  }, [router]);
+  }, [router, isPublicAssessmentPage]);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -59,8 +65,8 @@ export default function CandidateLayout({ children }: { children: React.ReactNod
     }
   };
 
-  // Hide sidebar/header for test environment
-  if (pathname.includes('/candidate/test/')) {
+  // Hide sidebar/header for public assessment flows
+  if (isPublicAssessmentPage) {
     return <>{children}</>;
   }
 
