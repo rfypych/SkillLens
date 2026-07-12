@@ -148,7 +148,7 @@ export default function CandidateAssessment() {
         ? keystrokeMetrics.backspace_count / keystrokeMetrics.total_chars
         : 100;
 
-      await api.post(`/assessment/submit?application_id=${appId}`, {
+      await api.post(`/assessment/${appId}/submit`, {
         answer: finalAnswer,
         tab_switches: tabSwitches,
         copy_paste_attempts: pasteCount,
