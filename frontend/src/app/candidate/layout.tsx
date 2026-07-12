@@ -161,10 +161,12 @@ export default function CandidateLayout({ children }: { children: React.ReactNod
         </header>
 
         {/* Page Content */}
-        <div className="p-4 sm:p-6 md:p-8 flex-1 overflow-x-hidden flex flex-col">
-          <div className="flex-1">
-            {children}
-          </div>
+        <div className="p-4 sm:p-6 md:p-8 flex-1 overflow-x-hidden">
+          {children}
+        </div>
+
+        {/* Footer Logos */}
+        <div className="w-full bg-brand-white/30">
           <SponsorLogos />
         </div>
       </main>
