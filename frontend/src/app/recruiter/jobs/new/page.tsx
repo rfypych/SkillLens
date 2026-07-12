@@ -103,22 +103,25 @@ export default function NewJobWizard() {
       </div>
 
       {/* Stepper */}
-      <div className="bg-brand-white p-4 rounded-2xl border border-brand-gray-light/30 shadow-sm flex items-center justify-between relative overflow-hidden">
-        <div className="absolute top-1/2 left-0 w-full h-0.5 bg-brand-gray-light/30 -translate-y-1/2 z-0" />
-        <div className="absolute top-1/2 left-0 h-0.5 bg-brand-primary -translate-y-1/2 transition-all duration-500 z-0" style={{ width: `${((step - 1) / 2) * 100}%` }} />
+      <div className="bg-brand-white p-6 md:px-12 rounded-3xl border border-brand-gray-light/30 shadow-sm flex items-center justify-between relative overflow-hidden">
+        <div className="absolute top-[40%] left-12 right-12 h-1 bg-brand-gray-light/20 -translate-y-1/2 z-0 rounded-full" />
+        <div className="absolute top-[40%] left-12 h-1 bg-brand-primary -translate-y-1/2 transition-all duration-700 ease-out z-0 rounded-full" style={{ width: `calc(${((step - 1) / 2) * 100}% - 4rem)` }} />
         
         {steps.map(s => (
-          <div key={s.num} className="relative z-10 flex flex-col items-center gap-2 bg-brand-white px-4">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm transition-colors border-2 ${
-              step > s.num 
-                ? 'bg-brand-primary border-brand-primary text-brand-white'
-                : step === s.num
-                  ? 'bg-brand-secondary border-brand-secondary text-brand-white'
-                  : 'bg-brand-white border-brand-gray-light/50 text-brand-gray-light'
-            }`}>
-              {step > s.num ? <CheckCircle2 className="w-5 h-5" /> : s.num}
-            </div>
-            <span className={`text-xs font-bold uppercase tracking-wider ${step >= s.num ? 'text-brand-secondary' : 'text-brand-gray-light'}`}>
+          <div key={s.num} className="relative z-10 flex flex-col items-center gap-3 bg-brand-white px-4">
+            <motion.div 
+              animate={step === s.num ? { scale: 1.1, y: -2 } : { scale: 1, y: 0 }}
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-base transition-all duration-300 shadow-sm ${
+                step > s.num 
+                  ? 'bg-brand-primary text-brand-white shadow-brand-primary/20'
+                  : step === s.num
+                    ? 'bg-brand-secondary text-brand-accent shadow-brand-secondary/20 ring-4 ring-brand-primary/10'
+                    : 'bg-[#F7F9F9] text-brand-gray-light border border-brand-gray-light/30'
+              }`}
+            >
+              {step > s.num ? <CheckCircle2 className="w-6 h-6" /> : s.num}
+            </motion.div>
+            <span className={`text-[10px] md:text-xs font-bold uppercase tracking-widest transition-colors ${step === s.num ? 'text-brand-primary' : step > s.num ? 'text-brand-secondary' : 'text-brand-gray-light'}`}>
               {s.title}
             </span>
           </div>
@@ -221,46 +224,43 @@ export default function NewJobWizard() {
                   <p className="text-sm text-brand-gray-dark">Instruct the AI on exactly what to measure during the Micro-Interview.</p>
                 </div>
                 
-                <div className="space-y-5">
-                  <div className="bg-brand-gray-light/10 p-5 rounded-2xl border border-brand-gray-light/30">
+                <div className="space-y-6">
+                  <div className="bg-[#F7F9F9] p-6 rounded-3xl border border-brand-gray-light/40 shadow-sm transition-all focus-within:ring-2 focus-within:ring-brand-primary/20">
                     <label className="block text-sm font-bold text-brand-secondary mb-2 flex items-center gap-2">
-                      <Target className="w-4 h-4 text-brand-primary" />
+                      <Target className="w-5 h-5 text-brand-primary" />
                       Expected Outcomes (6-12 Months)
                     </label>
-                    <p className="text-xs text-brand-gray-dark mb-3">What must they achieve? The AI will test if they have a realistic plan.</p>
+                    <p className="text-xs text-brand-gray-dark mb-4">What must they achieve? The AI will test if they have a realistic plan.</p>
                     <textarea 
                       name="expected_outcomes" value={formData.expected_outcomes} onChange={handleChange}
-                      rows={3}
                       placeholder="e.g. Migrate the monolith to microservices within 6 months while maintaining 99.9% uptime."
-                      className="w-full bg-white border border-brand-gray-light rounded-xl px-4 py-3 text-brand-secondary focus:outline-none focus:ring-2 focus:ring-brand-primary transition-colors text-sm font-medium resize-none shadow-sm"
+                      className="w-full bg-brand-white border border-brand-gray-light/50 rounded-2xl px-5 py-4 text-brand-secondary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all text-sm font-medium resize-none shadow-sm placeholder:text-brand-gray-light min-h-[120px] scrollbar-thin scrollbar-thumb-brand-gray-light"
                     />
                   </div>
 
-                  <div className="bg-brand-gray-light/10 p-5 rounded-2xl border border-brand-gray-light/30">
+                  <div className="bg-[#F7F9F9] p-6 rounded-3xl border border-brand-gray-light/40 shadow-sm transition-all focus-within:ring-2 focus-within:ring-brand-primary/20">
                     <label className="block text-sm font-bold text-brand-secondary mb-2 flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-brand-accent" />
+                      <Zap className="w-5 h-5 text-brand-accent" />
                       Specific Skills (Non-Trainable)
                     </label>
-                    <p className="text-xs text-brand-gray-dark mb-3">Skills they MUST possess on day one.</p>
+                    <p className="text-xs text-brand-gray-dark mb-4">Skills they MUST possess on day one.</p>
                     <textarea 
                       name="specific_skills" value={formData.specific_skills} onChange={handleChange}
-                      rows={3}
                       placeholder="e.g. Expert-level Go, Kubernetes orchestration, and PostgreSQL performance tuning."
-                      className="w-full bg-white border border-brand-gray-light rounded-xl px-4 py-3 text-brand-secondary focus:outline-none focus:ring-2 focus:ring-brand-primary transition-colors text-sm font-medium resize-none shadow-sm"
+                      className="w-full bg-brand-white border border-brand-gray-light/50 rounded-2xl px-5 py-4 text-brand-secondary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all text-sm font-medium resize-none shadow-sm placeholder:text-brand-gray-light min-h-[120px] scrollbar-thin scrollbar-thumb-brand-gray-light"
                     />
                   </div>
 
-                  <div className="bg-brand-gray-light/10 p-5 rounded-2xl border border-brand-gray-light/30">
+                  <div className="bg-[#F7F9F9] p-6 rounded-3xl border border-brand-gray-light/40 shadow-sm transition-all focus-within:ring-2 focus-within:ring-brand-primary/20">
                     <label className="block text-sm font-bold text-brand-secondary mb-2 flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-red-500" />
+                      <ShieldCheck className="w-5 h-5 text-red-500" />
                       Compliance & Red Flags
                     </label>
-                    <p className="text-xs text-brand-gray-dark mb-3">What should immediately disqualify them?</p>
+                    <p className="text-xs text-brand-gray-dark mb-4">What should immediately disqualify them?</p>
                     <textarea 
                       name="compliance_criteria" value={formData.compliance_criteria} onChange={handleChange}
-                      rows={3}
                       placeholder="e.g. Lack of security-first mindset, unable to explain basic ACID properties."
-                      className="w-full bg-white border border-brand-gray-light rounded-xl px-4 py-3 text-brand-secondary focus:outline-none focus:ring-2 focus:ring-brand-primary transition-colors text-sm font-medium resize-none shadow-sm"
+                      className="w-full bg-brand-white border border-brand-gray-light/50 rounded-2xl px-5 py-4 text-brand-secondary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all text-sm font-medium resize-none shadow-sm placeholder:text-brand-gray-light min-h-[120px] scrollbar-thin scrollbar-thumb-brand-gray-light"
                     />
                   </div>
                 </div>

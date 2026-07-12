@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import logging
 from celery_app import celery
@@ -6,6 +7,9 @@ from database import SessionLocal
 import models
 from openai import OpenAI
 from dotenv import load_dotenv
+
+# Ensure the backend directory is in the path for celery workers
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 load_dotenv()
 logger = logging.getLogger(__name__)
@@ -28,7 +32,11 @@ Job Description: {job.description}
 Expected Outcome: {job.expected_outcomes}
 Specific Skills: {job.specific_skills}
 
-Output Format: You MUST reply ONLY in raw JSON format with a single key "scenario" containing the complete text of the 2-3 paragraph scenario followed by the 4 specific questions (Problem Understanding, Solution Approach, Logic & Execution, Communication). Do NOT output markdown (like ```json), just the raw JSON object.
+Output Format: You MUST reply ONLY in raw JSON format with a single key "scenario".
+CRITICAL INSTRUCTION FOR SCENARIO CONTENT: The scenario text must be beautifully formatted in Markdown. 
+Use clear H3 headers (###), bullet points, and bold text for emphasis. 
+Include sections for '### The Scenario', '### Key Objectives', and then clearly list the 4 questions/tasks for the candidate. 
+Make it look professional, structured, and easy to read. Do NOT output markdown code blocks (like ```json), just the raw JSON object.
 """
         
         scenario_prompt = ""
